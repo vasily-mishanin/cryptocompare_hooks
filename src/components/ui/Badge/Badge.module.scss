@@ -1,0 +1,20 @@
+.image {
+  display: flex;
+  justify-content: center;
+
+  & img {
+    width: 100%;
+  }
+}
+
+.s {
+  width: 20px;
+}
+
+.m {
+  width: 30px;
+}
+
+.l {
+  width: 45px;
+}

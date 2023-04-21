@@ -166,7 +166,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
           <Loading isLoading={loading.isLoading} message={loading.message} />
         )}
 
-        <CoinsList />
+        <CoinsList userCoinsList={userCoinsList} />
       </div>
     );
   }

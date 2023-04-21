@@ -1,5 +1,6 @@
 .btn {
   width: 25px;
+  // flex-shrink: 0;
 
   img {
     width: 100%;
@@ -8,11 +9,6 @@
       stroke: var(--color-green);
     }
   }
-
-  // &:disabled {
-  //   opacity: 0.5;
-  //   cursor: default;
-  // }
 }
 
 .s {

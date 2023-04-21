@@ -3,6 +3,7 @@ import classes from './SearchResultItem.module.scss';
 import { Coin } from '../../pages/types';
 import { ButtonControl } from '../ui/Button/ButtonControl';
 import { Action } from '../ui/Button/types';
+import { Badge } from '../ui/Badge/Badge';
 
 type SearchResultItemProps = {
   currentCoin: Coin;
@@ -31,9 +32,11 @@ export class SearchResultItem extends Component<
 
     return (
       <div className={classes.wrapper}>
-        <div className={classes.image}>
-          <img src={currentCoin.imagePath} alt={currentCoin.name} />
-        </div>
+        <Badge
+          source={currentCoin.imagePath}
+          text={currentCoin.name}
+          size='l'
+        />
         <div>
           <span className={classes.name}>{currentCoin.name}</span>
           <span className={classes.symbol}>{currentCoin.symbol}</span>

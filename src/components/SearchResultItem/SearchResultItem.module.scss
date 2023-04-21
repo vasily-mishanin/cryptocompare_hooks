@@ -13,17 +13,6 @@
   border-radius: 0.25rem;
 }
 
-.image {
-  width: 30px;
-
-  display: flex;
-  justify-content: center;
-
-  & img {
-    width: 100%;
-  }
-}
-
 .name {
   color: var(--color-dark);
 }
