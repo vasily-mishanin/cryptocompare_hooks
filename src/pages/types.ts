@@ -11,6 +11,8 @@ export interface CoinDynamicData {
   price: number;
 }
 
+export type Coin = CoinStaticData & CoinDynamicData;
+
 export enum Currency {
   USD = 'USD',
   EUR = 'EUR',

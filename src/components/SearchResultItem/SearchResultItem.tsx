@@ -1,12 +1,12 @@
 import { Component, ReactNode } from 'react';
 import classes from './SearchResultItem.module.scss';
-import { CoinDynamicData, CoinStaticData } from '../../pages/types';
+import { Coin } from '../../pages/types';
 import { ButtonControl } from '../ui/Button/ButtonControl';
 import { Action } from '../ui/Button/types';
 
 type SearchResultItemProps = {
-  staticData: CoinStaticData;
-  dynamicData: CoinDynamicData;
+  currentCoin: Coin;
+  isListed: boolean;
   onAdd: (action: Action, id: string) => void;
 };
 
@@ -21,32 +21,36 @@ export class SearchResultItem extends Component<
   }
 
   onAddClick = (action: Action) => {
-    this.props.onAdd(action, this.props.staticData.id);
+    this.props.onAdd(action, this.props.currentCoin.id);
   };
 
   render(): ReactNode {
-    const { staticData, dynamicData, onAdd } = this.props;
+    const { currentCoin, isListed, onAdd } = this.props;
     const currensySymbol =
-      dynamicData.currency === 'USD' ? '$' : dynamicData.currency;
+      currentCoin.currency === 'USD' ? '$' : currentCoin.currency;
 
     return (
       <div className={classes.wrapper}>
         <div className={classes.image}>
-          <img src={staticData.imagePath} alt={staticData.name} />
+          <img src={currentCoin.imagePath} alt={currentCoin.name} />
         </div>
         <div>
-          <span className={classes.name}>{staticData.name}</span>
-          <span className={classes.symbol}>{staticData.symbol}</span>
+          <span className={classes.name}>{currentCoin.name}</span>
+          <span className={classes.symbol}>{currentCoin.symbol}</span>
         </div>
         <span className={classes.price}>
           {currensySymbol}
-          {dynamicData.price}
+          {currentCoin.price}
         </span>
-        <ButtonControl
-          type={Action.ADD}
-          size='s'
-          onClick={() => this.onAddClick(Action.ADD)}
-        />
+        {!isListed ? (
+          <ButtonControl
+            type={Action.ADD}
+            size='s'
+            onClick={() => this.onAddClick(Action.ADD)}
+          />
+        ) : (
+          <span>Listed</span>
+        )}
       </div>
     );
   }
