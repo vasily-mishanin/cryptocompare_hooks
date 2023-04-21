@@ -1,0 +1,43 @@
+.btn {
+  width: 25px;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    display: block;
+
+    svg {
+      stroke: var(--color-green);
+    }
+  }
+}
+
+.xs {
+  width: 25px;
+}
+
+.s {
+  width: 35px;
+}
+
+.m {
+  width: 50px;
+}
+
+.l {
+  width: 75px;
+}
+
+.add {
+  color: var(--color-green);
+  svg {
+    stroke: var(--color-green);
+  }
+}
+
+.remove {
+  color: var(--color-blue);
+  svg {
+    stroke: var(--color-blue);
+  }
+}

@@ -1,0 +1,22 @@
+.image {
+  display: flex;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  & img {
+    width: 100%;
+  }
+}
+
+.s {
+  width: 15px;
+}
+
+.m {
+  width: 25px;
+}
+
+.l {
+  width: 40px;
+}

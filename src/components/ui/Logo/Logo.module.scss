@@ -1,0 +1,17 @@
+.s {
+  width: 5rem;
+}
+
+.l {
+  width: 10rem;
+}
+
+.xl {
+  width: 15rem;
+}
+
+.logo {
+  & img {
+    width: 100%;
+  }
+}
