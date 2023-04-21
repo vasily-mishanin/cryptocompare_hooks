@@ -1,0 +1,37 @@
+.btn {
+  width: 25px;
+
+  img {
+    width: 100%;
+
+    svg {
+      stroke: var(--color-green);
+    }
+  }
+}
+
+.s {
+  width: 35px;
+}
+
+.m {
+  width: 50px;
+}
+
+.l {
+  width: 75px;
+}
+
+.add {
+  color: var(--color-green);
+  svg {
+    stroke: var(--color-green);
+  }
+}
+
+.remove {
+  color: var(--color-blue);
+  svg {
+    stroke: var(--color-blue);
+  }
+}
