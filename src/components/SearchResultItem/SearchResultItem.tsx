@@ -27,8 +27,17 @@ export class SearchResultItem extends Component<
 
   render(): ReactNode {
     const { currentCoin, isListed, onAdd } = this.props;
-    const currensySymbol =
+    const currencySymbol =
       currentCoin.currency === 'USD' ? '$' : currentCoin.currency;
+    const nameClasses = [
+      classes.name,
+      currentCoin.name.length > 8 ? classes['font-xs'] : '',
+    ].join(' ');
+
+    const symbolClasses = [
+      classes.symbol,
+      currentCoin.name.length > 8 ? classes['font-xs'] : '',
+    ].join(' ');
 
     return (
       <div className={classes.wrapper}>
@@ -38,11 +47,11 @@ export class SearchResultItem extends Component<
           size='l'
         />
         <div>
-          <span className={classes.name}>{currentCoin.name}</span>
-          <span className={classes.symbol}>{currentCoin.symbol}</span>
+          <span className={nameClasses}>{currentCoin.name}</span>
+          <span className={symbolClasses}>{currentCoin.symbol}</span>
         </div>
         <span className={classes.price}>
-          {currensySymbol}
+          {currencySymbol}
           {currentCoin.price}
         </span>
         {!isListed ? (
@@ -52,7 +61,7 @@ export class SearchResultItem extends Component<
             onClick={() => this.onAddClick(Action.ADD)}
           />
         ) : (
-          <span>Listed</span>
+          <span className={classes.listed}>Listed</span>
         )}
       </div>
     );

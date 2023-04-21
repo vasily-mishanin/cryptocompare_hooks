@@ -5,6 +5,7 @@ import classes from './MainPage.module.scss';
 import {
   domainUrl,
   getCoinsData,
+  getMultipleSymbolsPrices,
   getSingleSymbolPrice,
 } from '../api/api-crypto';
 import { SearchResultItem } from '../components/SearchResultItem/SearchResultItem';
@@ -16,6 +17,7 @@ import {
 } from '../api/api-local-storage';
 import { CoinsList } from '../components/CoinsList/CoinsList';
 import { Loading } from '../components/ui/Loading/Loading';
+import { DOGECOIN, REFETCH_TIME } from './constants';
 
 interface PriceResponseBody {
   [currency: string]: number;
@@ -31,13 +33,20 @@ type MainPageState = {
 };
 
 export class MainPage extends Component<MainPageProps, MainPageState> {
-  state: MainPageState = {
-    currentSearchResult: null,
-    currentCoin: null,
-    userCoinsList: [],
-    coinsStaticData: [],
-    loading: { isLoading: false, message: '' },
-  };
+  timer: number | null;
+
+  constructor(props: MainPageProps) {
+    super(props);
+    this.state = {
+      currentSearchResult: null,
+      currentCoin: null,
+      userCoinsList: [DOGECOIN],
+      coinsStaticData: [],
+      loading: { isLoading: false, message: '' },
+    };
+
+    this.timer = null;
+  }
 
   async componentDidMount(): Promise<void> {
     let coins = getFromLocalStorage('coinsStaticData');
@@ -53,6 +62,39 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     if (coins) {
       addToLocalStorage('coinsStaticData', coins);
       this.setState({ coinsStaticData: coins });
+    }
+
+    this.timer = setInterval(async () => {
+      const symbols = this.state.userCoinsList.map((coin) => coin.symbol); // e.g. 'BTC,ETH,DOGE' for API
+      const newPricesData = await getMultipleSymbolsPrices({ symbols }); // {BTC:{USD:28500,56}, ETH:{USD:..}..}
+      const newPrices = Object.entries(newPricesData).map(([symbol, price]) => {
+        const [currency, currencyValue] = Object.entries(
+          price as { [key: string]: number }
+        )[0];
+        return { symbol, currency, currencyValue };
+      }); // [['BTC', USD, 28500,56]]
+      console.log(newPrices);
+      const updatedUserCoinsList = [...this.state.userCoinsList].map((coin) => {
+        const newPrice = newPrices.find(
+          (price) => price.symbol === coin.symbol
+        );
+        if (newPrice) {
+          coin.price = newPrice.currencyValue;
+          return coin;
+        }
+        return coin;
+      });
+
+      this.setState((prev) => ({
+        ...prev,
+        userCoinsList: updatedUserCoinsList,
+      }));
+    }, REFETCH_TIME);
+  }
+
+  componentWillUnmount(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
     }
   }
 
@@ -122,7 +164,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     );
   };
 
-  handleAddCoinToMyList = (action: Action, id: string) => {
+  handleAddCoinToUserList = (action: Action, id: string) => {
     if (action !== Action.ADD) {
       return;
     }
@@ -141,6 +183,16 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     });
   };
 
+  handleRemoveCoinFromUserList = (action: Action, coinId: string) => {
+    if (action !== Action.REMOVE) {
+      return;
+    }
+    this.setState((prev) => ({
+      ...prev,
+      userCoinsList: prev.userCoinsList.filter((coin) => coin.id !== coinId),
+    }));
+  };
+
   render(): ReactNode {
     const { currentCoin, userCoinsList, loading } = this.state;
     const isCurrentCoinLicted = userCoinsList.find(
@@ -157,7 +209,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
         {currentCoin && (
           <SearchResultItem
             currentCoin={currentCoin}
-            onAdd={this.handleAddCoinToMyList}
+            onAdd={this.handleAddCoinToUserList}
             isListed={!!isCurrentCoinLicted}
           />
         )}
@@ -166,7 +218,10 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
           <Loading isLoading={loading.isLoading} message={loading.message} />
         )}
 
-        <CoinsList userCoinsList={userCoinsList} />
+        <CoinsList
+          userCoinsList={userCoinsList}
+          onRemoveCoin={this.handleRemoveCoinFromUserList}
+        />
       </div>
     );
   }

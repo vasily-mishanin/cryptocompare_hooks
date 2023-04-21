@@ -3,6 +3,7 @@ const baseURL = `https://min-api.cryptocompare.com/data`;
 
 const API_KEY =
   'dab9caf7738c45a3ea0f8d0bef5568fba1711252d7a3107b32c885f3b1f28f39';
+
 export async function getSingleSymbolPrice({
   symbol,
   currency = 'USD',
@@ -25,6 +26,35 @@ export async function getSingleSymbolPrice({
     }
 
     console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function getMultipleSymbolsPrices({
+  symbols,
+  currency = 'USD',
+}: {
+  symbols: string[];
+  currency?: string;
+}) {
+  const URI = `${baseURL}/pricemulti?fsyms=${symbols.join(
+    ','
+  )}&tsyms=${currency}&api_key=${API_KEY}&gt`;
+  try {
+    const response = await fetch(URI);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Something went wrong');
+    }
+
+    if (data.Response === 'Error') {
+      console.log('ERROR: ', data);
+      return;
+    }
+
     return data;
   } catch (err) {
     console.log(err);

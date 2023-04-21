@@ -2,19 +2,21 @@
   display: flex;
   justify-content: center;
 
+  flex-shrink: 0;
+
   & img {
     width: 100%;
   }
 }
 
 .s {
-  width: 20px;
+  width: 15px;
 }
 
 .m {
-  width: 30px;
+  width: 25px;
 }
 
 .l {
-  width: 45px;
+  width: 40px;
 }

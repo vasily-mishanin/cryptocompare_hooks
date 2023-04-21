@@ -1,14 +1,19 @@
 .btn {
   width: 25px;
-  // flex-shrink: 0;
+  flex-shrink: 0;
 
   img {
     width: 100%;
+    display: block;
 
     svg {
       stroke: var(--color-green);
     }
   }
+}
+
+.xs {
+  width: 25px;
 }
 
 .s {

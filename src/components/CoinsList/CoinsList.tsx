@@ -3,9 +3,11 @@ import { CoinsTable } from '../CoinsTable/CoinsTable';
 import { ListHeader } from '../ListHeader/ListHeader';
 import classes from './CoinsList.module.scss';
 import { Coin } from '../../pages/types';
+import { Action } from '../ui/Button/types';
 
 type CoinsListProps = {
   userCoinsList: Coin[];
+  onRemoveCoin: (action: Action, coinId: string) => void;
 };
 
 type CoinsListState = {};
@@ -16,14 +18,16 @@ export class CoinsList extends Component<CoinsListProps, CoinsListState> {
   }
 
   render(): ReactNode {
-    const columnsTitles = ['#', 'Name', 'Price', 'Actions'];
+    const columnsTitles = ['#', '', 'Name', '', 'Price', 'Actions'];
+    const { userCoinsList, onRemoveCoin } = this.props;
 
     return (
       <section>
         <ListHeader title='My list' />
         <CoinsTable
           columnsTitles={columnsTitles}
-          userCoinsList={this.props.userCoinsList}
+          userCoinsList={userCoinsList}
+          onRemoveCoin={onRemoveCoin}
         />
       </section>
     );
