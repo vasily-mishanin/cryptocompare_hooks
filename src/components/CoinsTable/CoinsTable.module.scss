@@ -7,6 +7,10 @@
 
 .head {
   width: 100%;
+  position: sticky;
+  top: 0px;
+
+  background-color: var(--color-lightlightgray);
 
   th {
     padding: 0.15rem 0.25rem;
@@ -42,7 +46,7 @@ td.symbol {
 }
 
 td.tendency {
-  width: 24px;
+  min-width: 24px;
 }
 
 .green {

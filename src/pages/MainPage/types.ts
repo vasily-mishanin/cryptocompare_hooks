@@ -27,3 +27,8 @@ export enum Tendency {
   DOWN,
   STATIC,
 }
+
+export enum LocalSorageKeys {
+  coinsStaticData = 'coinsStaticData',
+  userCoinsList = 'userCoinsList',
+}

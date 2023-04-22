@@ -2,12 +2,18 @@ import classes from './Loading.module.scss';
 
 type LoadingProps = {
   isLoading: boolean;
-  message: string;
+  loadingMessage: string;
+  resultMessage?: string;
 };
-export function Loading({ isLoading, message }: LoadingProps) {
+export function Loading({
+  isLoading,
+  loadingMessage,
+  resultMessage,
+}: LoadingProps) {
   return (
     <div className={classes.wrapper}>
-      {isLoading && <p>{message ? message : 'Loading...'}</p>}
+      {isLoading && <p>{loadingMessage ? loadingMessage : 'Loading...'}</p>}
+      {!isLoading && resultMessage && <p>{resultMessage}</p>}
     </div>
   );
 }

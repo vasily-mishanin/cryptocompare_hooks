@@ -9,7 +9,13 @@ import {
   getSingleSymbolPrice,
 } from '../../api/api-crypto';
 import { SearchResultItem } from '../../components/SearchResultItem/SearchResultItem';
-import { CoinDynamicData, CoinStaticData, Coin, Tendency } from './types';
+import {
+  CoinDynamicData,
+  CoinStaticData,
+  Coin,
+  Tendency,
+  LocalSorageKeys,
+} from './types';
 import { Action } from '../../components/ui/Button/types';
 import {
   addToLocalStorage,
@@ -29,7 +35,11 @@ type MainPageState = {
   currentCoin: Coin | null;
   userCoinsList: Coin[];
   coinsStaticData: CoinStaticData[];
-  loading: { isLoading: boolean; message: string };
+  loadingStatus: {
+    isLoading: boolean;
+    loadingMessage: string;
+    resultMessage?: string;
+  };
 };
 
 export class MainPage extends Component<MainPageProps, MainPageState> {
@@ -40,28 +50,39 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     this.state = {
       currentSearchResult: null,
       currentCoin: null,
-      userCoinsList: [DOGECOIN],
+      userCoinsList: [],
       coinsStaticData: [],
-      loading: { isLoading: false, message: '' },
+      loadingStatus: {
+        isLoading: false,
+        loadingMessage: '',
+        resultMessage: '',
+      },
     };
 
     this.timer = null;
   }
 
   async componentDidMount(): Promise<void> {
-    let coins = getFromLocalStorage('coinsStaticData');
-    let userCoinsListFromLocalStorage = getFromLocalStorage('userCoinsList');
+    let coins = getFromLocalStorage(LocalSorageKeys.coinsStaticData);
+    let userCoinsListFromLocalStorage = getFromLocalStorage(
+      LocalSorageKeys.userCoinsList
+    );
 
     if (!coins) {
       this.setState({
-        loading: { isLoading: true, message: 'Getting crypto static data...' },
+        loadingStatus: {
+          isLoading: true,
+          loadingMessage: 'Getting crypto static data...',
+        },
       });
       coins = await getCoinsData();
-      this.setState({ loading: { isLoading: false, message: '' } });
+      this.setState({
+        loadingStatus: { isLoading: false, loadingMessage: '' },
+      });
     }
 
     if (coins) {
-      addToLocalStorage('coinsStaticData', coins);
+      addToLocalStorage(LocalSorageKeys.coinsStaticData, coins);
       const initialUserCoinsList = userCoinsListFromLocalStorage
         ? userCoinsListFromLocalStorage
         : [DOGECOIN];
@@ -135,16 +156,26 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
 
   handleSearch = async (inputValue: string) => {
     this.setState({
-      loading: { isLoading: true, message: 'Loading price...' },
+      loadingStatus: { isLoading: true, loadingMessage: 'Loading price...' },
     });
+
     let priceData = (await getSingleSymbolPrice({
       symbol: inputValue,
-    })) as PriceResponseBody;
-    this.setState({ loading: { isLoading: false, message: '' } });
+    })) as PriceResponseBody | null;
 
     if (!priceData) {
+      this.setState({
+        loadingStatus: {
+          isLoading: false,
+          loadingMessage: '',
+          resultMessage: 'No such coin 💁‍♂️ ',
+        },
+        currentCoin: null,
+      });
       return;
     }
+
+    this.setState({ loadingStatus: { isLoading: false, loadingMessage: '' } });
 
     const coinPrice = Object.entries(priceData).at(0); // {USD: 28770.34} => ['USD', 28770.34]
 
@@ -163,6 +194,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
         ...prev,
         currentSearchResult: newResult,
       }),
+
       () => {
         const currentCoinStaticData = this.getCurrentCoinStaticData(); // uses this.state
 
@@ -195,7 +227,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
           ...prev.userCoinsList,
           this.state.currentCoin,
         ];
-        addToLocalStorage('userCoinsList', updatedUserCoinsList);
+        addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
 
         return {
           ...prev,
@@ -210,14 +242,21 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     if (action !== Action.REMOVE) {
       return;
     }
-    this.setState((prev) => ({
-      ...prev,
-      userCoinsList: prev.userCoinsList.filter((coin) => coin.id !== coinId),
-    }));
+    this.setState((prev) => {
+      const updatedUserCoinsList = prev.userCoinsList.filter(
+        (coin) => coin.id !== coinId
+      );
+      addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
+
+      return {
+        ...prev,
+        userCoinsList: updatedUserCoinsList,
+      };
+    });
   };
 
   render(): ReactNode {
-    const { currentCoin, userCoinsList, loading } = this.state;
+    const { currentCoin, userCoinsList, loadingStatus } = this.state;
     const isCurrentCoinListed = userCoinsList.find(
       (coin) => coin.id === currentCoin?.id
     );
@@ -238,7 +277,11 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
         )}
 
         {!currentCoin && (
-          <Loading isLoading={loading.isLoading} message={loading.message} />
+          <Loading
+            isLoading={loadingStatus.isLoading}
+            loadingMessage={loadingStatus.loadingMessage}
+            resultMessage={loadingStatus.resultMessage}
+          />
         )}
 
         <CoinsList

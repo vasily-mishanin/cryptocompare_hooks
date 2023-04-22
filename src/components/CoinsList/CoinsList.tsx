@@ -22,7 +22,7 @@ export class CoinsList extends Component<CoinsListProps, CoinsListState> {
     const { userCoinsList, onRemoveCoin } = this.props;
 
     return (
-      <section className={classes['list-section']}>
+      <section className={classes['list-table']}>
         <ListHeader title='My list' />
         <CoinsTable
           columnsTitles={columnsTitles}
