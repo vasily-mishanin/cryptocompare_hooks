@@ -22,10 +22,9 @@ export async function getSingleSymbolPrice({
 
     if (data.Response === 'Error') {
       console.log('ERROR: ', data);
-      return;
+      return null;
     }
 
-    console.log(data);
     return data;
   } catch (err) {
     console.log(err);
