@@ -9,7 +9,13 @@ import {
   getSingleSymbolPrice,
 } from '../../api/api-crypto';
 import { SearchResultItem } from '../../components/SearchResultItem/SearchResultItem';
-import { CoinDynamicData, CoinStaticData, Coin, Tendency } from './types';
+import {
+  CoinDynamicData,
+  CoinStaticData,
+  Coin,
+  Tendency,
+  LocalSorageKeys,
+} from './types';
 import { Action } from '../../components/ui/Button/types';
 import {
   addToLocalStorage,
@@ -40,7 +46,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     this.state = {
       currentSearchResult: null,
       currentCoin: null,
-      userCoinsList: [DOGECOIN],
+      userCoinsList: [],
       coinsStaticData: [],
       loading: { isLoading: false, message: '' },
     };
@@ -49,8 +55,10 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
   }
 
   async componentDidMount(): Promise<void> {
-    let coins = getFromLocalStorage('coinsStaticData');
-    let userCoinsListFromLocalStorage = getFromLocalStorage('userCoinsList');
+    let coins = getFromLocalStorage(LocalSorageKeys.coinsStaticData);
+    let userCoinsListFromLocalStorage = getFromLocalStorage(
+      LocalSorageKeys.userCoinsList
+    );
 
     if (!coins) {
       this.setState({
@@ -61,7 +69,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     }
 
     if (coins) {
-      addToLocalStorage('coinsStaticData', coins);
+      addToLocalStorage(LocalSorageKeys.coinsStaticData, coins);
       const initialUserCoinsList = userCoinsListFromLocalStorage
         ? userCoinsListFromLocalStorage
         : [DOGECOIN];
@@ -195,7 +203,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
           ...prev.userCoinsList,
           this.state.currentCoin,
         ];
-        addToLocalStorage('userCoinsList', updatedUserCoinsList);
+        addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
 
         return {
           ...prev,
@@ -210,10 +218,17 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     if (action !== Action.REMOVE) {
       return;
     }
-    this.setState((prev) => ({
-      ...prev,
-      userCoinsList: prev.userCoinsList.filter((coin) => coin.id !== coinId),
-    }));
+    this.setState((prev) => {
+      const updatedUserCoinsList = prev.userCoinsList.filter(
+        (coin) => coin.id !== coinId
+      );
+      addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
+
+      return {
+        ...prev,
+        userCoinsList: updatedUserCoinsList,
+      };
+    });
   };
 
   render(): ReactNode {

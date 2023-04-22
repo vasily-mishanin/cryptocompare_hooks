@@ -7,6 +7,10 @@
 
 .head {
   width: 100%;
+  position: sticky;
+  top: 0px;
+
+  background-color: var(--color-lightlightgray);
 
   th {
     padding: 0.15rem 0.25rem;
