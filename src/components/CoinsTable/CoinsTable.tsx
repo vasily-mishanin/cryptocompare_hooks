@@ -1,9 +1,11 @@
 import { Component, ReactNode } from 'react';
 import classes from './CoinsTable.module.scss';
-import { Coin } from '../../pages/types';
+import { Coin, Tendency } from '../../pages/MainPage/types';
 import { Badge } from '../ui/Badge/Badge';
 import { ButtonControl } from '../ui/Button/ButtonControl';
 import { Action } from '../ui/Button/types';
+import IconArrowUp from '../../assets/images/icon-arrow-up.svg';
+import IconArrowDown from '../../assets/images/icon-arrow-down.svg';
 
 type CoinsTableProps = {
   columnsTitles: string[];
@@ -20,6 +22,7 @@ export class CoinsTable extends Component<CoinsTableProps, CoinsTableState> {
 
   render(): ReactNode {
     const { userCoinsList, columnsTitles, onRemoveCoin } = this.props;
+
     return (
       <table className={classes.table}>
         <thead className={classes.head}>
@@ -39,12 +42,38 @@ export class CoinsTable extends Component<CoinsTableProps, CoinsTableState> {
               <td>
                 <span>{coin.name}</span>
               </td>
-              <td>
+              <td className={classes.symbol}>
                 <span>{coin.symbol}</span>
               </td>
-              <td>
+              <td
+                className={
+                  coin.dynamics === Tendency.UP
+                    ? classes.green
+                    : coin.dynamics === Tendency.DOWN
+                    ? classes.red
+                    : ''
+                }
+              >
                 {coin.currency === 'USD' ? '$ ' : coin.currency}
                 {coin.price}
+              </td>
+              <td className={classes.tendency}>
+                {coin.dynamics === Tendency.UP && (
+                  <Badge
+                    source={IconArrowUp}
+                    text='Rises'
+                    size='s'
+                    display='inline-block'
+                  />
+                )}
+                {coin.dynamics === Tendency.DOWN && (
+                  <Badge
+                    source={IconArrowDown}
+                    text='Getting cheaper'
+                    size='s'
+                    display='inline-block'
+                  />
+                )}
               </td>
               <td>
                 <ButtonControl

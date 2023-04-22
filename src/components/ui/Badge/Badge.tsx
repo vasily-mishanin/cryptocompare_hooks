@@ -3,11 +3,16 @@ import classes from './Badge.module.scss';
 type BadgeProps = {
   source: string;
   text: string;
-  size: 's' | 'm' | 'l';
+  size: 'xs' | 's' | 'm' | 'l';
+  display?: 'block' | 'inline' | 'inline-block';
 };
 
-export function Badge({ source, text, size }: BadgeProps) {
-  const badgeClasses = [classes.image, classes[size]].join(' ');
+export function Badge({ source, text, size, display }: BadgeProps) {
+  const badgeClasses = [
+    classes.image,
+    classes[size],
+    display ? classes[display] : '',
+  ].join(' ');
   return (
     <div className={badgeClasses}>
       <img src={source} alt={text} />

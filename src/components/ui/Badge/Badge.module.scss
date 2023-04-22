@@ -9,6 +9,10 @@
   }
 }
 
+.xs {
+  width: 10px;
+}
+
 .s {
   width: 15px;
 }
@@ -19,4 +23,16 @@
 
 .l {
   width: 40px;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.inline-block {
+  display: inline-block;
 }

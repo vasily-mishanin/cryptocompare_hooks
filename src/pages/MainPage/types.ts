@@ -9,6 +9,7 @@ export interface CoinDynamicData {
   symbol: string;
   currency: string;
   price: number;
+  dynamics?: Tendency;
 }
 
 export type Coin = CoinStaticData & CoinDynamicData;
@@ -19,4 +20,10 @@ export enum Currency {
   GBP = 'GBP',
   JPY = 'JPY',
   RUB = 'RUB',
+}
+
+export enum Tendency {
+  UP,
+  DOWN,
+  STATIC,
 }
