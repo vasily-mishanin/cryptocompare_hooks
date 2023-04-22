@@ -2,7 +2,7 @@ import { Component, ReactNode } from 'react';
 import { CoinsTable } from '../CoinsTable/CoinsTable';
 import { ListHeader } from '../ListHeader/ListHeader';
 import classes from './CoinsList.module.scss';
-import { Coin } from '../../pages/types';
+import { Coin } from '../../pages//MainPage/types';
 import { Action } from '../ui/Button/types';
 
 type CoinsListProps = {
@@ -18,11 +18,11 @@ export class CoinsList extends Component<CoinsListProps, CoinsListState> {
   }
 
   render(): ReactNode {
-    const columnsTitles = ['#', '', 'Name', '', 'Price', 'Actions'];
+    const columnsTitles = ['#', '', 'Name', '', 'Price', '', 'Actions'];
     const { userCoinsList, onRemoveCoin } = this.props;
 
     return (
-      <section>
+      <section className={classes['list-section']}>
         <ListHeader title='My list' />
         <CoinsTable
           columnsTitles={columnsTitles}

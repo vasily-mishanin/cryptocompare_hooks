@@ -1,6 +1,6 @@
 import { Component, ReactNode } from 'react';
 import classes from './SearchResultItem.module.scss';
-import { Coin } from '../../pages/types';
+import { Coin } from '../../pages/MainPage/types';
 import { ButtonControl } from '../ui/Button/ButtonControl';
 import { Action } from '../ui/Button/types';
 import { Badge } from '../ui/Badge/Badge';
