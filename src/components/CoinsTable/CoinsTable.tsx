@@ -48,7 +48,7 @@ export class CoinsTable extends Component<CoinsTableProps, CoinsTableState> {
               <td
                 className={
                   coin.dynamics === Tendency.UP
-                    ? classes.green
+                    ? [classes.price, classes.green].join(' ')
                     : coin.dynamics === Tendency.DOWN
                     ? classes.red
                     : ''

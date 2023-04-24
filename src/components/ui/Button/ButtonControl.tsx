@@ -5,7 +5,7 @@ import { Action } from './types';
 
 type ButtonControlProps = {
   type: Action;
-  size: 'xs' | 's' | 'm' | 'l';
+  size: 'xxs' | 'xs' | 's' | 'm' | 'l';
   onClick: (action: Action) => void;
 };
 
