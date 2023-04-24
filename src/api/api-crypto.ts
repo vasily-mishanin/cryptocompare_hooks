@@ -1,8 +1,7 @@
 export const domainUrl = `https://www.cryptocompare.com`;
 const baseURL = `https://min-api.cryptocompare.com/data`;
 
-const API_KEY =
-  'dab9caf7738c45a3ea0f8d0bef5568fba1711252d7a3107b32c885f3b1f28f39';
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 export async function getSingleSymbolPrice({
   symbol,
