@@ -43,11 +43,11 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 5. Every five seconds this list updates and shows if they grow or fall. when exchange rate is changed, you need to show this somehow to user (for instance, green or red arrows)
 6. Every currency has a button 'delete'
    P.S. You don't need to use Redux for this task
-7. My bonuses: local storage and all coins icons in the table
+7. My bonuses: local storage and all coins icons in the table, table scroll with sticky header
 
 ### Screenshot
 
-![Cryptocompare](Screenshot 2023-04-24 at 15.55.04.png)
+![Cryptocompare](src/assets/images/app-screenshot.png)
 
 ### Links
 
