@@ -168,7 +168,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
         loadingStatus: {
           isLoading: false,
           loadingMessage: '',
-          resultMessage: 'No such coin 💁‍♂️ ',
+          resultMessage: 'No such coin 💁‍♂️. Or use a symbol, please ',
         },
         currentCoin: null,
       });
@@ -265,7 +265,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
       <div className={classes.app}>
         <Header />
         <SearchBar
-          placeholder='e.g. ETH or Ethereum'
+          placeholder="e.g. 'ETH' for Ethereum"
           onSearch={this.handleSearch}
         />
         {currentCoin && (
