@@ -92,41 +92,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
       });
     }
 
-    this.timer = setInterval(async () => {
-      const symbols = this.state.userCoinsList.map((coin) => coin.symbol); // e.g. 'BTC,ETH,DOGE' for API
-      const newPricesData = await getMultipleSymbolsPrices({ symbols }); // {BTC:{USD:28500,56}, ETH:{USD:..}..}
-      const newPrices = Object.entries(newPricesData).map(([symbol, price]) => {
-        const [currency, value] = Object.entries(
-          price as { [key: string]: number }
-        )[0];
-        return { symbol, currency, value };
-      }); // [['BTC', USD, 28500,56]]
-      const updatedUserCoinsList = [...this.state.userCoinsList].map((coin) => {
-        const newPrice = newPrices.find(
-          (price) => price.symbol === coin.symbol
-        );
-
-        if (newPrice && newPrice.value > coin.price) {
-          coin.price = newPrice.value;
-          coin.dynamics = Tendency.UP;
-          return coin;
-        }
-
-        if (newPrice && newPrice.value < coin.price) {
-          coin.price = newPrice.value;
-          coin.dynamics = Tendency.DOWN;
-          return coin;
-        }
-
-        coin.dynamics = Tendency.STATIC;
-        return coin;
-      });
-
-      this.setState((prev) => ({
-        ...prev,
-        userCoinsList: updatedUserCoinsList,
-      }));
-    }, REFETCH_TIME);
+    this.timer = setInterval(this.refreshRates, REFETCH_TIME);
   }
 
   componentWillUnmount(): void {
@@ -135,47 +101,12 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     }
   }
 
-  getCurrentCoinStaticData = () => {
-    const coin = this.state.coinsStaticData.find(
-      (coin) => coin.symbol === this.state.currentSearchResult?.symbol
-    );
-
-    if (!coin) {
-      return null;
-    }
-
-    const { id, symbol, name, imagePath } = coin;
-    const currentCoin: CoinStaticData = {
-      id,
-      name,
-      symbol,
-      imagePath: `${domainUrl}${imagePath}`,
-    };
-    return currentCoin;
-  };
-
   handleSearch = async (inputValue: string) => {
-    this.setState({
-      loadingStatus: { isLoading: true, loadingMessage: 'Loading price...' },
-    });
-
-    let priceData = (await getSingleSymbolPrice({
-      symbol: inputValue,
-    })) as PriceResponseBody | null;
+    const priceData = await this.getPriceData(inputValue);
 
     if (!priceData) {
-      this.setState({
-        loadingStatus: {
-          isLoading: false,
-          loadingMessage: '',
-          resultMessage: 'No such coin 💁‍♂️. Or use a symbol, please ',
-        },
-        currentCoin: null,
-      });
       return;
     }
-
-    this.setState({ loadingStatus: { isLoading: false, loadingMessage: '' } });
 
     const coinPrice = Object.entries(priceData).at(0); // {USD: 28770.34} => ['USD', 28770.34]
 
@@ -194,21 +125,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
         ...prev,
         currentSearchResult: newResult,
       }),
-
-      () => {
-        const currentCoinStaticData = this.getCurrentCoinStaticData(); // uses this.state
-
-        if (!currentCoinStaticData || !this.state.currentSearchResult) {
-          return;
-        }
-
-        const currentCoin = {
-          ...this.state.currentSearchResult,
-          ...currentCoinStaticData,
-        };
-
-        this.setState((prev) => ({ ...prev, currentCoin: currentCoin }));
-      }
+      this.setCurrentCoin
     );
   };
 
@@ -253,6 +170,99 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
         userCoinsList: updatedUserCoinsList,
       };
     });
+  };
+
+  getCurrentCoinStaticData = () => {
+    const coin = this.state.coinsStaticData.find(
+      (coin) => coin.symbol === this.state.currentSearchResult?.symbol
+    );
+
+    if (!coin) {
+      return null;
+    }
+
+    const { id, symbol, name, imagePath } = coin;
+    const currentCoin: CoinStaticData = {
+      id,
+      name,
+      symbol,
+      imagePath: `${domainUrl}${imagePath}`,
+    };
+    return currentCoin;
+  };
+
+  setCurrentCoin = () => {
+    const currentCoinStaticData = this.getCurrentCoinStaticData(); // uses this.state
+
+    if (!currentCoinStaticData || !this.state.currentSearchResult) {
+      return;
+    }
+
+    const currentCoin = {
+      ...this.state.currentSearchResult,
+      ...currentCoinStaticData,
+    };
+
+    this.setState((prev) => ({ ...prev, currentCoin: currentCoin }));
+  };
+
+  getPriceData = async (coinSymbol: string) => {
+    this.setState({
+      loadingStatus: { isLoading: true, loadingMessage: 'Loading price...' },
+    });
+
+    let priceData = (await getSingleSymbolPrice({
+      symbol: coinSymbol,
+    })) as PriceResponseBody | null;
+
+    if (!priceData) {
+      this.setState({
+        loadingStatus: {
+          isLoading: false,
+          loadingMessage: '',
+          resultMessage: 'No such coin 💁‍♂️. Or use a symbol, please ',
+        },
+        currentCoin: null,
+      });
+      return;
+    }
+
+    this.setState({ loadingStatus: { isLoading: false, loadingMessage: '' } });
+    return priceData;
+  };
+
+  refreshRates = async () => {
+    const symbols = this.state.userCoinsList.map((coin) => coin.symbol); // e.g. 'BTC,ETH,DOGE' for API
+    const newPricesData = await getMultipleSymbolsPrices({ symbols }); // {BTC:{USD:28500,56}, ETH:{USD:..}..}
+    const newPrices = Object.entries(newPricesData).map(([symbol, price]) => {
+      const [currency, value] = Object.entries(
+        price as { [key: string]: number }
+      )[0];
+      return { symbol, currency, value };
+    }); // [['BTC', USD, 28500,56]]
+    const updatedUserCoinsList = [...this.state.userCoinsList].map((coin) => {
+      const newPrice = newPrices.find((price) => price.symbol === coin.symbol);
+
+      if (newPrice && newPrice.value > coin.price) {
+        coin.price = newPrice.value;
+        coin.dynamics = Tendency.UP;
+        return coin;
+      }
+
+      if (newPrice && newPrice.value < coin.price) {
+        coin.price = newPrice.value;
+        coin.dynamics = Tendency.DOWN;
+        return coin;
+      }
+
+      coin.dynamics = Tendency.STATIC;
+      return coin;
+    });
+
+    this.setState((prev) => ({
+      ...prev,
+      userCoinsList: updatedUserCoinsList,
+    }));
   };
 
   render(): ReactNode {
