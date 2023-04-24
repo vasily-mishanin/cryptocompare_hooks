@@ -47,6 +47,8 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 
 ### Screenshot
 
+![Cryptocompare](Screenshot 2023-04-24 at 15.55.04.png)
+
 ### Links
 
 - Solution GitHub: [https://github.com/vasily-mishanin/cryptocompare](https://github.com/vasily-mishanin/cryptocompare)
