@@ -12,7 +12,12 @@ export function Loading({
 }: LoadingProps) {
   return (
     <div className={classes.wrapper}>
-      {isLoading && <p>{loadingMessage ? loadingMessage : 'Loading...'}</p>}
+      {isLoading && (
+        <>
+          <div className={classes.spinner}></div>
+          <p>{loadingMessage ? loadingMessage : 'Loading...'}</p>
+        </>
+      )}
       {!isLoading && resultMessage && <p>{resultMessage}</p>}
     </div>
   );

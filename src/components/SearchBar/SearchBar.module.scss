@@ -24,8 +24,9 @@
   .btn {
     height: 100%;
     width: 100px;
+    padding: 0.5rem;
 
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     background-color: var(--color-green);
 
     &:hover {

@@ -1,6 +1,6 @@
 ## Criss Cross Game
 
-Live Site on Netlify: []()
+Live Site on Netlify: [https://cute-tulumba-66505c.netlify.app/](https://cute-tulumba-66505c.netlify.app/)
 
 ### Table of contents
 
@@ -43,14 +43,15 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 5. Every five seconds this list updates and shows if they grow or fall. when exchange rate is changed, you need to show this somehow to user (for instance, green or red arrows)
 6. Every currency has a button 'delete'
    P.S. You don't need to use Redux for this task
+7. My bonuses: local storage and all coins icons in the table
 
 ### Screenshot
 
 ### Links
 
-- Solution GitHub: []()
+- Solution GitHub: [https://github.com/vasily-mishanin/cryptocompare](https://github.com/vasily-mishanin/cryptocompare)
 
-- Live Site on Netlify: []()
+- Live Site on Netlify: [https://cute-tulumba-66505c.netlify.app/](https://cute-tulumba-66505c.netlify.app/)
 
 ## My process
 
@@ -72,12 +73,15 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 
 - refresh good old classes on React
 - refresh local storage API
+- learn some new API
 
 ### Continued development
 
-Finished for now
+Finished for now, refactor after mentor's review
 
 ### Useful resources
+
+https://www.cryptocompare.com/cryptopian/general
 
 ## Me
 
@@ -86,7 +90,3 @@ Finished for now
 - Twitter - [@MishaninVasily](https://twitter.com/MishaninVasily)
 
 ## Acknowledgments
-
-> Thanks to my mentor Milovanov Constantin from [DSR Corporation](https://en.dsr-corporation.com/) for thorough review of the code.
-
-What I've refactored:
