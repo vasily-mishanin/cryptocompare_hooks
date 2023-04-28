@@ -24,7 +24,7 @@ export async function getSingleSymbolPrice({
       return null;
     }
 
-    return data;
+    return data; // ETH -> {USD: 285600}
   } catch (err) {
     console.log(err);
   }

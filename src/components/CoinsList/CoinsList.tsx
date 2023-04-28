@@ -7,7 +7,7 @@ import { Action } from '../ui/Button/types';
 
 type CoinsListProps = {
   userCoinsList: Coin[];
-  onRemoveCoin: (action: Action, coinId: string) => void;
+  onRemoveCoin: (coinId: string) => void;
 };
 
 type CoinsListState = {};
