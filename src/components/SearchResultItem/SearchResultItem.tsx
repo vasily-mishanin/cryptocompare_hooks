@@ -8,7 +8,7 @@ import { Badge } from '../ui/Badge/Badge';
 type SearchResultItemProps = {
   currentCoin: Coin;
   isListed: boolean;
-  onAdd: (action: Action, id: string) => void;
+  onAdd: (id: string) => void;
 };
 
 type SearchResultItemState = {};
@@ -21,8 +21,8 @@ export class SearchResultItem extends Component<
     super(props);
   }
 
-  onAddClick = (action: Action) => {
-    this.props.onAdd(action, this.props.currentCoin.id);
+  onAddClick = () => {
+    this.props.onAdd(this.props.currentCoin.id);
   };
 
   render(): ReactNode {
@@ -58,7 +58,7 @@ export class SearchResultItem extends Component<
           <ButtonControl
             type={Action.ADD}
             size='s'
-            onClick={() => this.onAddClick(Action.ADD)}
+            onClick={() => this.onAddClick()}
           />
         ) : (
           <span className={classes.listed}>Listed</span>

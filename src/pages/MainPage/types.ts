@@ -1,3 +1,20 @@
+export interface PriceResponseBody {
+  [currency: string]: number;
+}
+
+export type MainPageProps = {};
+export type MainPageState = {
+  currentSearchResult: CoinDynamicData | null;
+  currentCoin: Coin | null;
+  userCoinsList: Coin[];
+  coinsStaticData: CoinStaticData[];
+  loadingStatus: {
+    isLoading: boolean;
+    loadingMessage: string;
+    resultMessage?: string;
+  };
+};
+
 export interface CoinStaticData {
   id: string;
   symbol: string;

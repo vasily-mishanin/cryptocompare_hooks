@@ -10,7 +10,7 @@ import IconArrowDown from '../../assets/images/icon-arrow-down.svg';
 type CoinsTableProps = {
   columnsTitles: string[];
   userCoinsList: Coin[];
-  onRemoveCoin: (action: Action, coinId: string) => void;
+  onRemoveCoin: (coinId: string) => void;
 };
 
 type CoinsTableState = {};
@@ -27,8 +27,8 @@ export class CoinsTable extends Component<CoinsTableProps, CoinsTableState> {
       <table className={classes.table}>
         <thead className={classes.head}>
           <tr className={classes.head__row}>
-            {columnsTitles.map((title) => (
-              <th key={title + Math.random().toFixed(3)}>{title}</th>
+            {columnsTitles.map((title, i) => (
+              <th key={i}>{title}</th>
             ))}
           </tr>
         </thead>
@@ -79,7 +79,7 @@ export class CoinsTable extends Component<CoinsTableProps, CoinsTableState> {
                 <ButtonControl
                   type={Action.REMOVE}
                   size='xs'
-                  onClick={() => onRemoveCoin(Action.REMOVE, coin.id)}
+                  onClick={() => onRemoveCoin(coin.id)}
                 />
               </td>
             </tr>
