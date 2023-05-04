@@ -3,7 +3,6 @@ import { CoinsTable } from '../CoinsTable/CoinsTable';
 import { ListHeader } from '../ListHeader/ListHeader';
 import classes from './CoinsList.module.scss';
 import { Coin } from '../../pages//MainPage/types';
-import { Action } from '../ui/Button/types';
 
 type CoinsListProps = {
   userCoinsList: Coin[];

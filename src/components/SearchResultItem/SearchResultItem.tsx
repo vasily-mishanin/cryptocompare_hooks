@@ -1,69 +1,47 @@
-import { Component, ReactNode } from 'react';
 import classes from './SearchResultItem.module.scss';
-import { Coin } from '../../pages/MainPage/types';
 import { ButtonControl } from '../ui/Button/ButtonControl';
 import { Action } from '../ui/Button/types';
 import { Badge } from '../ui/Badge/Badge';
+import { SearchResultItemProps } from './types';
 
-type SearchResultItemProps = {
-  currentCoin: Coin;
-  isListed: boolean;
-  onAdd: (id: string) => void;
-};
-
-type SearchResultItemState = {};
-
-export class SearchResultItem extends Component<
-  SearchResultItemProps,
-  SearchResultItemState
-> {
-  constructor(props: SearchResultItemProps) {
-    super(props);
-  }
-
-  onAddClick = () => {
-    this.props.onAdd(this.props.currentCoin.id);
+export function SearchResultItem({
+  currentCoin,
+  isListed,
+  onAdd,
+}: SearchResultItemProps) {
+  const onAddClick = () => {
+    onAdd(currentCoin.id);
   };
 
-  render(): ReactNode {
-    const { currentCoin, isListed, onAdd } = this.props;
-    const currencySymbol =
-      currentCoin.currency === 'USD' ? '$' : currentCoin.currency;
-    const nameClasses = [
-      classes.name,
-      currentCoin.name.length > 8 ? classes['font-xs'] : '',
-    ].join(' ');
+  const currencySymbol =
+    currentCoin.currency === 'USD' ? '$' : currentCoin.currency;
 
-    const symbolClasses = [
-      classes.symbol,
-      currentCoin.name.length > 8 ? classes['font-xs'] : '',
-    ].join(' ');
+  const nameClasses = [
+    classes.name,
+    currentCoin.name.length > 8 ? classes['font-xs'] : '',
+  ].join(' ');
 
-    return (
-      <div className={classes.wrapper}>
-        <Badge
-          source={currentCoin.imagePath}
-          text={currentCoin.name}
-          size='l'
-        />
-        <div>
-          <span className={nameClasses}>{currentCoin.name}</span>
-          <span className={symbolClasses}>{currentCoin.symbol}</span>
-        </div>
-        <span className={classes.price}>
-          {currencySymbol}
-          {currentCoin.price}
-        </span>
-        {!isListed ? (
-          <ButtonControl
-            type={Action.ADD}
-            size='s'
-            onClick={() => this.onAddClick()}
-          />
-        ) : (
-          <span className={classes.listed}>Listed</span>
-        )}
+  const symbolClasses = [
+    classes.symbol,
+    currentCoin.name.length > 8 ? classes['font-xs'] : '',
+  ].join(' ');
+
+  return (
+    <div className={classes.wrapper}>
+      <Badge source={currentCoin.imagePath} text={currentCoin.name} size='l' />
+      <div>
+        <span className={nameClasses}>{currentCoin.name}</span>
+        <span className={symbolClasses}>{currentCoin.symbol}</span>
       </div>
-    );
-  }
+      <span className={classes.price}>
+        {currencySymbol}
+        {currentCoin.price}
+      </span>
+      {!isListed ? (
+        <ButtonControl type={Action.ADD} size='s' onClick={onAddClick} />
+      ) : (
+        <span className={classes.listed}>Listed</span>
+      )}
+    </div>
+  );
 }

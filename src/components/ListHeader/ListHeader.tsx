@@ -1,10 +1,6 @@
 import classes from './ListHeader.module.scss';
 
-type ListHeaderProps = {
-  title: string;
-};
-
-export function ListHeader({ title }: ListHeaderProps) {
+export function ListHeader({ title }: { title: string }) {
   const data = new Date().toLocaleDateString('ru-RU', {
     year: 'numeric',
     month: '2-digit',

@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { useEffect, useReducer } from 'react';
 import { Header } from '../../components/Header/Header';
 import { SearchBar } from '../../components/SearchBar/SearchBar';
 import classes from './MainPage.module.scss';
@@ -14,11 +14,11 @@ import {
   CoinStaticData,
   Tendency,
   LocalSorageKeys,
-  MainPageProps,
   MainPageState,
   PriceResponseBody,
+  ActionType,
+  Coin,
 } from './types';
-import { Action } from '../../components/ui/Button/types';
 import {
   addToLocalStorage,
   getFromLocalStorage,
@@ -26,48 +26,44 @@ import {
 import { CoinsList } from '../../components/CoinsList/CoinsList';
 import { Loading } from '../../components/ui/Loading/Loading';
 import { DOGECOIN, REFETCH_TIME } from './constants';
+import { coinsReducer } from './reducer';
 
-export class MainPage extends Component<MainPageProps, MainPageState> {
-  timer: number | null;
+const initialState: MainPageState = {
+  currentSearchResult: null,
+  currentCoin: null,
+  userCoinsList: [],
+  coinsStaticData: [],
+  loadingStatus: {
+    isLoading: false,
+    loadingMessage: '',
+    resultMessage: '',
+  },
+};
 
-  constructor(props: MainPageProps) {
-    super(props);
-    this.state = {
-      currentSearchResult: null,
-      currentCoin: null,
-      userCoinsList: [],
-      coinsStaticData: [],
-      loadingStatus: {
-        isLoading: false,
-        loadingMessage: '',
-        resultMessage: '',
-      },
-    };
+export function MainPage() {
+  const [state, dispatch] = useReducer(coinsReducer, initialState);
 
-    this.timer = null;
-  }
-
-  async componentDidMount(): Promise<void> {
-    this.initCoinsStaticData();
-
-    this.timer = setInterval(this.refreshRates, REFETCH_TIME);
-  }
-
-  componentWillUnmount(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
+  useEffect(() => {
+    if (!state.coinsStaticData || state.coinsStaticData.length === 0) {
+      initCoinsStaticData();
     }
-  }
 
-  handleSearch = async (inputValue: string) => {
-    const priceData = await this.getPriceData(inputValue);
+    setCurrentCoin();
+    const refetchInterval = setInterval(refreshRates, REFETCH_TIME);
+
+    return () => {
+      clearInterval(refetchInterval);
+    };
+  }, [state.currentSearchResult, state.userCoinsList]);
+
+  const handleSearch = async (inputValue: string) => {
+    const priceData = await getPriceData(inputValue);
 
     if (!priceData) {
       return;
     }
 
     const coinPrice = Object.entries(priceData).at(0); // {USD: 28770.34} => ['USD', 28770.34]
-
     if (!coinPrice) {
       return;
     }
@@ -78,66 +74,59 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
       price: coinPrice[1],
     };
 
-    this.setState(
-      (prev) => ({
-        ...prev,
-        currentSearchResult: newResult,
-      }),
-      this.setCurrentCoin
-    );
-  };
-
-  handleAddCoinToUserList = (id: string) => {
-    this.setState((prev) => this.addCoinIfNotExists(prev, id));
-  };
-
-  handleRemoveCoinFromUserList = (coinId: string) => {
-    const updatedUserCoinsList = this.state.userCoinsList.filter(
-      (coin) => coin.id !== coinId
-    );
-    addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
-    this.setState((prev) => {
-      return {
-        ...prev,
-        userCoinsList: updatedUserCoinsList,
-      };
+    dispatch({
+      type: ActionType.SET_CURRENT_SEARCH_RESULT,
+      payload: { currentSearchResult: newResult },
     });
   };
 
-  initCoinsStaticData = async () => {
+  const handleAddCoinToUserList = (id: string) => {
+    dispatch({
+      type: ActionType.ADD_COIN_TO_USER_LIST,
+      payload: { coinId: id },
+    });
+  };
+
+  const handleRemoveCoinFromUserList = (coinId: string) => {
+    const updatedUserCoinsList = state.userCoinsList.filter(
+      (coin) => coin.id !== coinId
+    );
+
+    addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
+
+    dispatch({
+      type: ActionType.REMOVE_COIN_FROM_USER_LIST,
+      payload: { userCoinsList: updatedUserCoinsList },
+    });
+  };
+
+  const initCoinsStaticData = async () => {
     let coins = getFromLocalStorage(LocalSorageKeys.coinsStaticData);
     let userCoinsListFromLocalStorage = getFromLocalStorage(
       LocalSorageKeys.userCoinsList
     );
 
-    if (!coins) {
-      this.setState({
-        loadingStatus: {
-          isLoading: true,
-          loadingMessage: 'Getting crypto static data...',
-        },
-      });
-      coins = await getCoinsData();
-      this.setState({
-        loadingStatus: { isLoading: false, loadingMessage: '' },
-      });
-      return;
-    }
-
-    addToLocalStorage(LocalSorageKeys.coinsStaticData, coins);
     const initialUserCoinsList = userCoinsListFromLocalStorage
       ? userCoinsListFromLocalStorage
       : [DOGECOIN];
 
-    this.setState({
-      coinsStaticData: coins,
-      userCoinsList: initialUserCoinsList,
+    if (!coins) {
+      dispatch({ type: ActionType.LOADING_STATIC_DATA, payload: {} });
+      coins = await getCoinsData();
+      dispatch({ type: ActionType.LOADING_END, payload: {} });
+    }
+
+    addToLocalStorage(LocalSorageKeys.coinsStaticData, coins);
+
+    dispatch({
+      type: ActionType.INIT_STATIC_DATA,
+      payload: { coinsStaticData: coins, userCoinsList: initialUserCoinsList },
     });
   };
 
-  getCurrentCoinStaticData = () => {
-    const coin = this.state.coinsStaticData.find(
-      (coin) => coin.symbol === this.state.currentSearchResult?.symbol
+  const getCurrentCoinStaticData = () => {
+    const coin = state.coinsStaticData.find(
+      (coin) => coin.symbol === state.currentSearchResult?.symbol
     );
 
     if (!coin) {
@@ -145,6 +134,7 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     }
 
     const { id, symbol, name, imagePath } = coin;
+
     const currentCoin: CoinStaticData = {
       id,
       name,
@@ -154,80 +144,50 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     return currentCoin;
   };
 
-  setCurrentCoin = () => {
-    const currentCoinStaticData = this.getCurrentCoinStaticData(); // uses this.state
+  const setCurrentCoin = () => {
+    const currentCoinStaticData = getCurrentCoinStaticData(); // uses state
 
-    if (!currentCoinStaticData || !this.state.currentSearchResult) {
+    if (!currentCoinStaticData || !state.currentSearchResult) {
       return;
     }
 
-    const currentCoin = {
-      ...this.state.currentSearchResult,
+    const currentCoin: Coin = {
+      ...state.currentSearchResult,
       ...currentCoinStaticData,
     };
 
-    this.setState((prev) => ({ ...prev, currentCoin: currentCoin }));
+    dispatch({
+      type: ActionType.SET_CURRENT_COIN,
+      payload: { currentCoin: currentCoin },
+    });
   };
 
-  getPriceData = async (coinSymbol: string) => {
-    this.setState({
-      loadingStatus: { isLoading: true, loadingMessage: 'Loading price...' },
-    });
-
+  const getPriceData = async (coinSymbol: string) => {
+    dispatch({ type: ActionType.LOADING_PRICE, payload: {} });
     let priceData = (await getSingleSymbolPrice({
       symbol: coinSymbol,
     })) as PriceResponseBody | null;
 
     if (!priceData) {
-      this.setState({
-        loadingStatus: {
-          isLoading: false,
-          loadingMessage: '',
-          resultMessage: 'No such coin 💁‍♂️. Or use a symbol, please ',
-        },
-        currentCoin: null,
-      });
+      dispatch({ type: ActionType.LOADING_END_NO_DATA, payload: {} });
       return;
     }
 
-    this.setState({ loadingStatus: { isLoading: false, loadingMessage: '' } });
+    dispatch({ type: ActionType.LOADING_END, payload: {} });
     return priceData;
   };
 
-  addCoinIfNotExists = (prevState: MainPageState, id: string) => {
-    const existingCoinInTheList = prevState.userCoinsList.find(
-      (coin) => coin.id === id
-    );
-
-    if (prevState.currentCoin && !existingCoinInTheList) {
-      const updatedUserCoinsList = [
-        ...prevState.userCoinsList,
-        prevState.currentCoin,
-      ];
-      addToLocalStorage(LocalSorageKeys.userCoinsList, updatedUserCoinsList);
-
-      return {
-        ...prevState,
-        userCoinsList: updatedUserCoinsList,
-      };
-    }
-
-    return prevState;
+  const refreshRates = async () => {
+    const newPrices = await getNewPrices();
+    const updatedUserCoinsList = createUpdatedUserCoinsList(newPrices);
+    dispatch({
+      type: ActionType.REFRESH_RATES,
+      payload: { userCoinsList: updatedUserCoinsList },
+    });
   };
 
-  refreshRates = async () => {
-    const newPrices = await this.getNewPrices();
-
-    const updatedUserCoinsList = await this.getUpdatedUserCoinsList(newPrices);
-
-    this.setState((prev) => ({
-      ...prev,
-      userCoinsList: updatedUserCoinsList,
-    }));
-  };
-
-  getNewPrices = async () => {
-    const symbols = this.state.userCoinsList.map((coin) => coin.symbol); // e.g. 'BTC,ETH,DOGE' for API
+  const getNewPrices = async () => {
+    const symbols = state.userCoinsList.map((coin) => coin.symbol); // e.g. 'BTC,ETH,DOGE' for API
     const newPricesData = await getMultipleSymbolsPrices({ symbols }); // {BTC:{USD:28500,56}, ETH:{USD:..}..}
     const newPrices = Object.entries(newPricesData).map(([symbol, price]) => {
       const [currency, value] = Object.entries(
@@ -238,67 +198,62 @@ export class MainPage extends Component<MainPageProps, MainPageState> {
     return newPrices;
   };
 
-  getUpdatedUserCoinsList = async (
+  const createUpdatedUserCoinsList = (
     newPrices: {
       symbol: string;
       currency: string;
       value: number;
     }[]
   ) => {
-    return [...this.state.userCoinsList].map((coin) => {
+    return [...state.userCoinsList].map((coin) => {
       const newPrice = newPrices.find((price) => price.symbol === coin.symbol);
-
       if (newPrice && newPrice.value > coin.price) {
         coin.price = newPrice.value;
         coin.dynamics = Tendency.UP;
         return coin;
       }
-
       if (newPrice && newPrice.value < coin.price) {
         coin.price = newPrice.value;
         coin.dynamics = Tendency.DOWN;
         return coin;
       }
-
       coin.dynamics = Tendency.STATIC;
       return coin;
     });
   };
 
-  render(): ReactNode {
-    const { currentCoin, userCoinsList, loadingStatus } = this.state;
-    const isCurrentCoinListed = userCoinsList.find(
-      (coin) => coin.id === currentCoin?.id
-    );
+  const { currentCoin, userCoinsList, loadingStatus } = state;
+  const isCurrentCoinListed = userCoinsList.find(
+    (coin) => coin.id === currentCoin?.id
+  );
 
-    return (
-      <div className={classes.app}>
-        <Header />
-        <SearchBar
-          placeholder="e.g. 'ETH' for Ethereum"
-          onSearch={this.handleSearch}
+  return (
+    <div className={classes.app}>
+      <Header />
+      <SearchBar
+        placeholder="e.g. 'ETH' for Ethereum"
+        onSearch={handleSearch}
+      />
+      {currentCoin && (
+        <SearchResultItem
+          currentCoin={currentCoin}
+          onAdd={handleAddCoinToUserList}
+          isListed={!!isCurrentCoinListed}
         />
-        {currentCoin && (
-          <SearchResultItem
-            currentCoin={currentCoin}
-            onAdd={this.handleAddCoinToUserList}
-            isListed={!!isCurrentCoinListed}
-          />
-        )}
+      )}
 
-        {!currentCoin && (
-          <Loading
-            isLoading={loadingStatus.isLoading}
-            loadingMessage={loadingStatus.loadingMessage}
-            resultMessage={loadingStatus.resultMessage}
-          />
-        )}
-
-        <CoinsList
-          userCoinsList={userCoinsList}
-          onRemoveCoin={this.handleRemoveCoinFromUserList}
+      {!currentCoin && (
+        <Loading
+          isLoading={loadingStatus.isLoading}
+          loadingMessage={loadingStatus.loadingMessage}
+          resultMessage={loadingStatus.resultMessage}
         />
-      </div>
-    );
-  }
+      )}
+
+      <CoinsList
+        userCoinsList={userCoinsList}
+        onRemoveCoin={handleRemoveCoinFromUserList}
+      />
+    </div>
+  );
 }
