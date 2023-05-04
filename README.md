@@ -93,8 +93,6 @@ https://www.cryptocompare.com/cryptopian/general
 
 ## Acknowledgments
 
-](## Criss Cross Game
-
 Live Site on Netlify: [https://singular-capybara-d28d43.netlify.app/](https://singular-capybara-d28d43.netlify.app/)
 
 ### Table of contents
@@ -335,8 +333,6 @@ https://www.cryptocompare.com/cryptopian/general
 - Twitter - [@MishaninVasily](https://twitter.com/MishaninVasily)
 
 ## Acknowledgments
-
-](## Criss Cross Game
 
 Live Site on Netlify: [https://singular-capybara-d28d43.netlify.app/](https://singular-capybara-d28d43.netlify.app/)
 
