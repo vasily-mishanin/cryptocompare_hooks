@@ -1,6 +1,6 @@
-## Criss Cross Game
+## Cryptocompare - on hooks
 
-Live Site on Netlify: [https://cute-tulumba-66505c.netlify.app/](https://cute-tulumba-66505c.netlify.app/)
+Live Site on Netlify: [https://singular-capybara-d28d43.netlify.app/](https://singular-capybara-d28d43.netlify.app/)
 
 ### Table of contents
 
@@ -28,7 +28,7 @@ Live Site on Netlify: [https://cute-tulumba-66505c.netlify.app/](https://cute-tu
 
 ## Overview
 
-Crypto Currency Rate follow app
+Crypto Currency Rate follow app. Now refactored on React Hooks
 
 ### The challenge
 
@@ -53,7 +53,7 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 
 - Solution GitHub: [https://github.com/vasily-mishanin/cryptocompare](https://github.com/vasily-mishanin/cryptocompare)
 
-- Live Site on Netlify: [https://cute-tulumba-66505c.netlify.app/](https://cute-tulumba-66505c.netlify.app/)
+- Live Site on Netlify: [https://singular-capybara-d28d43.netlify.app/](https://singular-capybara-d28d43.netlify.app/)
 
 ## My process
 
@@ -73,7 +73,7 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 
 ### What I learned
 
-- refresh good old classes on React
+- refresh useReducer React hook
 - refresh local storage API
 - learn some new API
 
@@ -88,7 +88,5 @@ https://www.cryptocompare.com/cryptopian/general
 ## Me
 
 - Website - [vasmish.com](https://vasmish.com/)
-
-- Twitter - [@MishaninVasily](https://twitter.com/MishaninVasily)
 
 ## Acknowledgments
