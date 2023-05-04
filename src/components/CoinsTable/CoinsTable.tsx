@@ -1,16 +1,11 @@
 import classes from './CoinsTable.module.scss';
-import { Coin, Tendency } from '../../pages/MainPage/types';
+import { Tendency } from '../../pages/MainPage/types';
+import { CoinsTableProps } from './types';
+import { Action } from '../ui/Button/types';
 import { Badge } from '../ui/Badge/Badge';
 import { ButtonControl } from '../ui/Button/ButtonControl';
-import { Action } from '../ui/Button/types';
 import IconArrowUp from '../../assets/images/icon-arrow-up.svg';
 import IconArrowDown from '../../assets/images/icon-arrow-down.svg';
-
-type CoinsTableProps = {
-  columnsTitles: string[];
-  userCoinsList: Coin[];
-  onRemoveCoin: (coinId: string) => void;
-};
 
 export function CoinsTable({
   columnsTitles,

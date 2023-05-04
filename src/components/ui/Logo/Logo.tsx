@@ -1,10 +1,6 @@
 import classes from './Logo.module.scss';
 import LogoBusiness from '../../../assets/images/logo.png';
-
-type LogoProps = {
-  size: 's' | 'l' | 'xl';
-  text: string;
-};
+import { LogoProps } from './types';
 
 export function Logo({ size, text }: LogoProps) {
   const logoClass = [classes.logo, classes[size]].join(' ');

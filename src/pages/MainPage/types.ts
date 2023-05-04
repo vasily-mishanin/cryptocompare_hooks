@@ -3,8 +3,9 @@ export interface PriceResponseBody {
 }
 
 export type MainPageProps = {};
+
 export type MainPageState = {
-  currentSearchResult: CoinDynamicData | null;
+  currentSearchResult: CoinDynamicData | null | undefined;
   currentCoin: Coin | null;
   userCoinsList: Coin[];
   coinsStaticData: CoinStaticData[];
@@ -48,4 +49,22 @@ export enum Tendency {
 export enum LocalSorageKeys {
   coinsStaticData = 'coinsStaticData',
   userCoinsList = 'userCoinsList',
+}
+
+export type CoinAction = {
+  type: ActionType;
+  payload: Partial<MainPageState> & { coinId?: string };
+};
+
+export enum ActionType {
+  LOADING_STATIC_DATA,
+  INIT_STATIC_DATA,
+  LOADING_PRICE,
+  LOADING_END,
+  LOADING_END_NO_DATA,
+  SET_CURRENT_SEARCH_RESULT,
+  SET_CURRENT_COIN,
+  ADD_COIN_TO_USER_LIST,
+  REMOVE_COIN_FROM_USER_LIST,
+  REFRESH_RATES,
 }

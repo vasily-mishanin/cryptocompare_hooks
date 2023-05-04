@@ -1,10 +1,6 @@
 import classes from './Loading.module.scss';
+import { LoadingProps } from './types';
 
-type LoadingProps = {
-  isLoading: boolean;
-  loadingMessage: string;
-  resultMessage?: string;
-};
 export function Loading({
   isLoading,
   loadingMessage,

@@ -1,48 +1,29 @@
-import { Component, ReactNode } from 'react';
 import classes from './SearchBar.module.scss';
+import { useState } from 'react';
+import { SearchBarProps } from './types';
 
-type SearchBarProps = {
-  placeholder: string;
-  onSearch: (value: string) => void;
-};
+export function SearchBar({ placeholder, onSearch }: SearchBarProps) {
+  const [value, setValue] = useState('');
 
-type SearchBarState = {
-  value: string;
-  placeholder: string;
-};
-
-export class SearchBar extends Component<SearchBarProps, SearchBarState> {
-  state: SearchBarState = {
-    value: '',
-    placeholder: '',
-  };
-
-  constructor(props: SearchBarProps) {
-    super(props);
-    this.state.placeholder = props.placeholder;
-  }
-
-  handleSubmit(e: React.FormEvent) {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    this.props.onSearch(this.state.value);
-  }
-
-  handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const enteredSearchValue = (event.target as HTMLInputElement).value;
-    this.setState({ value: enteredSearchValue });
+    onSearch(value);
   };
 
-  render(): ReactNode {
-    return (
-      <form className={classes.wrapper} onSubmit={this.handleSubmit.bind(this)}>
-        <input
-          className={classes.input}
-          type='text'
-          placeholder={this.state.placeholder}
-          onChange={this.handleInputChange}
-        />
-        <button className={classes.btn}> Search</button>
-      </form>
-    );
-  }
+  const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const enteredSearchValue = (event.target as HTMLInputElement).value;
+    setValue(enteredSearchValue);
+  };
+
+  return (
+    <form className={classes.wrapper} onSubmit={handleSubmit}>
+      <input
+        className={classes.input}
+        type='text'
+        placeholder={placeholder}
+        onChange={handleInputChange}
+      />
+      <button className={classes.btn}> Search</button>
+    </form>
+  );
 }

@@ -11,6 +11,7 @@ export async function getSingleSymbolPrice({
   currency?: string;
 }) {
   const URI = `${baseURL}/price?fsym=${symbol}&tsyms=${currency}&api_key=${API_KEY}&gt`;
+
   try {
     const response = await fetch(URI);
     const data = await response.json();
@@ -37,9 +38,11 @@ export async function getMultipleSymbolsPrices({
   symbols: string[];
   currency?: string;
 }) {
-  const URI = `${baseURL}/pricemulti?fsyms=${symbols.join(
-    ','
-  )}&tsyms=${currency}&api_key=${API_KEY}&gt`;
+  const cryptoSymbols = symbols.join(',');
+  const URI = `${baseURL}/pricemulti?fsyms=${cryptoSymbols}&tsyms=${currency}&api_key=${API_KEY}&gt`;
+
+  console.log('getMultipleSymbolsPrices ', cryptoSymbols);
+
   try {
     const response = await fetch(URI);
     const data = await response.json();
@@ -61,6 +64,7 @@ export async function getMultipleSymbolsPrices({
 
 export async function getCoinsData() {
   const URI = `${baseURL}/all/coinlist`;
+
   try {
     const response = await fetch(URI);
     const data = await response.json();
@@ -89,6 +93,7 @@ function getCoinsMainInfo({
   };
 }) {
   const coinsInfo = [];
+
   for (let symbol in Data) {
     const coin = {
       id: Data[symbol].Id,
@@ -98,5 +103,6 @@ function getCoinsMainInfo({
     };
     coinsInfo.push(coin);
   }
+
   return coinsInfo;
 }
