@@ -41,8 +41,6 @@ export async function getMultipleSymbolsPrices({
   const cryptoSymbols = symbols.join(',');
   const URI = `${baseURL}/pricemulti?fsyms=${cryptoSymbols}&tsyms=${currency}&api_key=${API_KEY}&gt`;
 
-  console.log('getMultipleSymbolsPrices ', cryptoSymbols);
-
   try {
     const response = await fetch(URI);
     const data = await response.json();

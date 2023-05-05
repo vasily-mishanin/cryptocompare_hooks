@@ -51,7 +51,7 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 
 ### Links
 
-- Solution GitHub: [https://github.com/vasily-mishanin/cryptocompare](https://github.com/vasily-mishanin/cryptocompare)
+- Solution GitHub: [https://github.com/vasily-mishanin/cryptocompare_hooks](https://github.com/vasily-mishanin/cryptocompare_hooks)
 
 - Live Site on Netlify: [https://singular-capybara-d28d43.netlify.app/](https://singular-capybara-d28d43.netlify.app/)
 
@@ -59,7 +59,7 @@ Your app should have an input for searching cryptocurrencies and a list of crypt
 
 ### Built with
 
-- Semantic HTML5 markup, canvas for strokes on the criss-cross field
+- Semantic HTML5 markup
 
 - SCSS
 
